@@ -76,8 +76,7 @@ fetch(tectonicPlatesURL)
   
     console.log("Techtonic Plates Layer:", tectonicPlatesData);
   })
-  .catch(error => {
-    console.error("error fetching tectonic plates data:", error);
+  
   });  
 
 
@@ -125,4 +124,3 @@ function createLegend() {
 
 // Call the createLegend function
 createLegend();
-});
