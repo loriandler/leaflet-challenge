@@ -5,6 +5,11 @@ let baseLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
   attribution: '© OpenStreetMap contributors'
 });
 
+let satelliteBaseLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+  subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+  attribution: '© Google Maps'
+ });
+
 let earthquakeLayer = L.layerGroup();
 
 let tectonicPlatesLayer = L.layerGroup();
@@ -13,10 +18,8 @@ let myMap = L.map('map', {
   // Center the map at [latitude, longitude] and set zoom level
   center: [20, 10],
   zoom: 2,
-  layers: [baseLayer, earthquakeLayer]
+  layers: [baseLayer, satelliteBaseLayer, earthquakeLayer, tectonicPlatesLayer]
 });
-
-
 
 
 // bring in the url and json data
@@ -34,7 +37,7 @@ d3.json(baseURL).then(function(response) {
       let location = earthquake.properties.place;
 
       let markerSize = magnitude * 3;
-      let colorScheme = ["#ffffcc", "#a1dab4", "#41b6c4", "#225ea8"];
+      let colorScheme = ["#ffffcc", "#a1dab4", "#41b6c4", "#225ea8", "#525252"];
       let color = getColor(depth);
 
       // loop through the data points
@@ -82,7 +85,8 @@ fetch(tectonicPlatesURL)
 
 // Add layers to the map
 let baseLayers = {
-  "Base Map": baseLayer
+  "Base Map": baseLayer,
+  "Satellite Map": satelliteBaseLayer
 };
 
 let overlays = {
@@ -100,22 +104,24 @@ function getColor(depth) {
 }
 
 // Move the createLegend function definition
-function createLegend() {
+function createLegend(limits, colors) {
   let legend = L.control({ position: "bottomright" });
 
   legend.onAdd = function(map) {
     let div = L.DomUtil.create('div', 'legend');
-    let depthThresholds = [10, 100, 300, 500];
-    let labels = ["< 10km", "10 - 100km","100 - 300km", "300 - 500km", "> 500km"];
-    let colorScheme = ["#ffffcc", "#a1dab4", "#41b6c4", "#225ea8"];
+    let labels = []; 
 
-    for (let i = 0; i < depthThresholds.length; i++) {
-      div.innerHTML +=
-        '<div class="legend-item">' +
-        '<div class="legend-color-box" style="background-color:' + colorScheme[i] + '"></div>' +
-        labels[i] +
-        '</div>';
+    for (let i = 0; i < limits.length; i++) {
+      let from = limits[i];
+      let to = limits[i+1];
+      labels.push(
+        `<div class="legend-item">
+          <div class= "legend-color-box" style="background-color: ${colors[i]}"></div>
+          <div class = "legend-label" style="color: #ff007f; font-weight:bold;">${from} - ${to}</div>
+        </div>` 
+      );
     }
+    div.innerHTML = `<div class="legend-title" style="color: #ff007f; font-size: 18px;">Depth Legend</div>${labels.join("")}`;
     return div;
   };
 
@@ -123,4 +129,6 @@ function createLegend() {
 }
 
 // Call the createLegend function
-createLegend();
+let depthLimits = [10, 100, 300, 500];
+let depthColors = ["#ffffcc", "#a1dab4", "#41b6c4", "#225ea8", "#525252"];
+createLegend(depthLimits, depthColors)
