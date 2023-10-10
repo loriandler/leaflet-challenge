@@ -28,6 +28,8 @@ In Part 2: I got the data on tectonic plates from https://github.com/fraxen/tect
 After completing both part 1 and 2, I spent some time working on updating the shading of the markers, the fill opacity and the legend colors.
 
 ## Credits
+I used color brewer to get color attributes to update my java script code: https://colorbrewer2.org/#type=sequential&scheme=BuGn&n=4
+
 Thank you to tutor, Limei Hou, who helped me with figuring out how to order the layering and get the different objects to display and able to check on and off.  She was extremely patient and helpful.  
 
 Thank you to Hunter Hollis, instructor, and TA's Randy and Sam.
